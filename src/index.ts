@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "node:fs/promises"
+import path from "node:path"
 import process from "node:process"
 import pc from "picocolors"
 import type { CtxError } from "ts-explicit-errors"
@@ -15,10 +16,14 @@ const BASE_IGNORE_PATTERNS = [".git/", "node_modules/", "dist/"]
 
 async function tsImportFix(): Promise<CtxError[]> {
   const { fileIgnorePatterns, ...fixImportsOptions } = cli()
+  const cwd = process.cwd()
+
+  // If a file ignore pattern starts with "./", it doesn't get ignored. Calling `path.relative` strips the leading "./". This also handles the case where an absolute path is provided.
+  const resolvedFileIgnorePatterns = fileIgnorePatterns.map((pattern) => path.relative(cwd, pattern))
 
   const errors: CtxError[] = []
 
-  const allFileIgnorePatterns = [...BASE_IGNORE_PATTERNS, "astro.config.ts", ...fileIgnorePatterns]
+  const allFileIgnorePatterns = [...BASE_IGNORE_PATTERNS, ...resolvedFileIgnorePatterns]
   const filePaths = await Array.fromAsync(fs.glob(FILES_GLOB, { exclude: allFileIgnorePatterns }))
 
   const fixImportsResult = await fixImports(filePaths, fixImportsOptions)
