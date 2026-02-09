@@ -3,7 +3,7 @@
   "git": {
     "commitMessage": "release: v${version}",
     "tagName": "v${version}",
-    "tagAnnotation": "${version}"
+    "tagAnnotation": "version ${version}"
   },
   "hooks": {
     "before:init": "bun bundle",
