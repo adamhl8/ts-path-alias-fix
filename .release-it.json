@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "git": {
+    "commitMessage": "release: v${version}",
+    "tagName": "v${version}",
+    "tagAnnotation": "${version}"
+  },
+  "hooks": {
+    "before:init": "bun bundle",
+    "after:bump": "bun biome format --write package.json"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "${version}"
+  },
+  "npm": {
+    "publishPackageManager": "bun",
+    "publishPath": ""
+  }
+}
